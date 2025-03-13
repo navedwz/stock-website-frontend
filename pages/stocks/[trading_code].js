@@ -11,23 +11,42 @@ export default function StockDetails() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (trading_code) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks`)
-        .then(res => res.json())
-        .then(data => {
-          const foundStock = data.find(s => s.trading_code === trading_code);
-          if (foundStock) {
-            setStock(foundStock);
-          } else {
-            setError('Stock not found');
-          }
-        })
-        .catch(() => setError('Error fetching stock data'));
+    async function fetchStockData() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks`);
+        const data = await res.json();
+        console.log('✅ Stock API Response:', data);
 
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks/history/${trading_code}`)
-        .then(res => res.json())
-        .then(data => setHistoricalData(data))
-        .catch(() => setError('Error fetching historical data'));
+        // ✅ Ensure correct stock is found
+        const foundStock = data.find(s => s.trading_code.toUpperCase() === trading_code.toUpperCase());
+        if (foundStock) {
+          setStock(foundStock);
+        } else {
+          setError('❌ Stock not found');
+        }
+      } catch (err) {
+        setError('❌ Error fetching stock data');
+      }
+    }
+
+    async function fetchHistoricalData() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks/history/${trading_code}`);
+        const data = await res.json();
+        console.log('✅ Historical Data Response:', data);
+
+        // ✅ Ensure dates are sorted correctly
+        const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        setHistoricalData(sortedData);
+      } catch (err) {
+        setError('❌ Error fetching historical data');
+      }
+    }
+
+    if (trading_code) {
+      fetchStockData();
+      fetchHistoricalData();
     }
   }, [trading_code]);
 
@@ -51,15 +70,17 @@ export default function StockDetails() {
       {historicalData.length > 0 && (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={historicalData}>
-            <XAxis dataKey="date" />
+            <XAxis dataKey="date" tickFormatter={(date) => new Date(date).toLocaleDateString('en-GB')} />
             <YAxis domain={['auto', 'auto']} />
-            <Tooltip />
+            <Tooltip formatter={(value) => `৳${value}`} />
             <Line type="monotone" dataKey="price" stroke="#007bff" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       )}
 
-      <button className="mt-5 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => router.push('/stocks')}>← Back to All Stocks</button>
+      <button className="mt-5 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => router.push('/stocks')}>
+        ← Back to All Stocks
+      </button>
     </div>
   );
 }
