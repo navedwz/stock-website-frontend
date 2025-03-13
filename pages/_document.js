@@ -1,4 +1,6 @@
-export default function Document({ Html, Head, Main, NextScript }) {
+import { Html, Head, Main, NextScript } from 'next/document';
+
+export default function Document() {
   return (
     <Html lang="en">
       <Head>
