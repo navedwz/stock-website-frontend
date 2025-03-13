@@ -12,34 +12,35 @@ export default function StocksPage() {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Real-time DSE Stock Data</h1>
-      {error && <p style={{color:"red"}}>{error}</p>}
-      {stocks.length === 0 && !error && <p>Loading data...</p>}
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold mb-4 text-center">📈 Real-time DSE Stock Data</h1>
+      {error && <p className="text-red-600">{error}</p>}
+      {!error && stocks.length === 0 && <p>Loading data clearly...</p>}
       {stocks.length > 0 && (
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-          <thead>
+        <table className="w-full text-center border-collapse border border-gray-200 mt-5">
+          <thead className="bg-blue-100">
             <tr>
-              <th style={{border:"1px solid black"}}>Trading Code</th>
-              <th style={{ border: '1px solid black' }}>LTP</th>
-              <th style={{ border: '1px solid black' }}>High</th>
-              <th style={{ border: '1px solid black' }}>Low</th>
-              <th style={{ border: '1px solid black' }}>Change</th>
+              <th className="border p-2">Trading Code</th>
+              <th className="border border-gray-300">LTP</th>
+              <th className="border border-gray-200">High</th>
+              <th className="border border-gray-200">Low</th>
+              <th className="border border-gray-200">Change</th>
             </tr>
           </thead>
           <tbody>
             {stocks.map(stock => (
-              <tr key={stock.trading_code}>
-                <td style={{ border: '1px solid black' }}>{stock.trading_code}</td>
-                <td style={{ border: '1px solid black' }}>{stock.ltp}</td>
-                <td style={{ border: '1px solid black' }}>{stock.high}</td>
-                <td style={{ border: '1px solid black' }}>{stock.low}</td>
-                <td style={{ border: '1px solid black' }}>{stock.change}</td>
+              <tr key={stock.trading_code} className="hover:bg-gray-100">
+                <td className="border border-gray-200 p-2">{stock.trading_code}</td>
+                <td className="border border-gray-200">{stock.ltp}</td>
+                <td className="border border-gray-200">{stock.high}</td>
+                <td className="border border-gray-200">{stock.low}</td>
+                <td className="border border-gray-200">{stock.change}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 }
