@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function StocksPage() {
   const [stocks, setStocks] = useState([]);
@@ -6,15 +7,24 @@ export default function StocksPage() {
   const [filter, setFilter] = useState('all'); // Default filter: Show all
   const [error, setError] = useState('');
 
+  // ✅ Ensuring data is loaded properly
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks`)
-      .then(res => res.json())
-      .then(data => setStocks(data))
-      .catch(() => setError('Error fetching stock data'));
+    async function fetchStockData() {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks`);
+        const data = await response.json();
+        console.log('Stock data:', data); // Debugging
+        setStocks(data);
+      } catch (error) {
+        setError('Error fetching stock data.');
+      }
+    }
+    fetchStockData();
   }, []);
 
-  // Filter function
+  // ✅ Fixing filter logic
   const filteredStocks = stocks.filter(stock => {
+    if (!stock.trading_code) return false;
     const matchesSearch = stock.trading_code.toLowerCase().includes(searchQuery.toLowerCase());
     
     if (filter === 'top-gainers') {
@@ -28,7 +38,9 @@ export default function StocksPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-4 text-center">📈 Real-time DSE Stock Data</h1>
+      <h1 className="text-3xl font-bold mb-4 flex items-center">
+        📈 Real-time DSE Stock Data
+      </h1>
 
       {/* Search & Filter Controls */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-4">
@@ -54,8 +66,8 @@ export default function StocksPage() {
       {error && <p className="text-red-600">{error}</p>}
       {!error && filteredStocks.length === 0 && <p>No results found.</p>}
 
-      {/* Stocks Table */}
-      {filteredStocks.length > 0 && (
+      {/* ✅ Fix: Ensure stocks table is visible */}
+      {stocks.length > 0 && (
         <table className="w-full text-center border-collapse border border-gray-200 mt-5">
           <thead className="bg-blue-100">
             <tr>
@@ -70,7 +82,7 @@ export default function StocksPage() {
             {filteredStocks.map(stock => (
               <tr key={stock.trading_code} className="hover:bg-gray-100">
                 <td className="border p-2 text-blue-500 font-bold">
-                  <a href={`/stocks/${stock.trading_code}`}>{stock.trading_code}</a>
+                  <Link href={`/stocks/${stock.trading_code}`}>{stock.trading_code}</Link>
                 </td>
                 <td className="border">{stock.ltp}</td>
                 <td className="border">{stock.high}</td>
