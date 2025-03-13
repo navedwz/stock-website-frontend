@@ -10,7 +10,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "recharts": "latest"
+    "recharts": "latest",
     "tailwindcss": "latest",
     "autoprefixer": "latest",
     "postcss": "latest",
