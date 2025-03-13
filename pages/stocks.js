@@ -1,27 +1,21 @@
 import { useEffect, useState } from 'react';
 
 export default function StocksPage() {
-  const [backendMessage, setBackendMessage] = useState('Loading...');
+  const [message, setMessage] = useState('Loading...');
 
-useEffect(() => {
-  async function fetchStocks() { // clearly defined function name
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks`);
-      const data = await response.json();
-      setBackendMessage(data.message);
-    } catch (error) {
-      setBackendMessage('Error fetching data from backend.');
-    }
-  };
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/stocks`)
+      .then((res) => res.json())
+      .then((data) => setMessage(data.message))
+      .catch((err) => setMessage('Error fetching data.'));
+  }, []);
 
-  fetchStocks(); // <-- Corrected call
-}, []);
-
+  const [message, setMessage] = useState('');
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold">Stocks Data Fetch Test</h1>
-      <p className="mt-4">Backend Message: {backendMessage}</p>
+    <div style={{padding: "20px"}}>
+      <h1 style={{fontSize: "24px", fontWeight: "bold"}}>Stocks Data Fetch Test</h1>
+      <p>Backend says: {message || "Loading..."}</p>
     </div>
   );
 }
