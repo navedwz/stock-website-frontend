@@ -11,21 +11,16 @@ export default function StocksPage() {
       .catch(err => setError('Error fetching data'));
   }, []);
 
-  const [stocks, setStocks] = useState([]);
-  const [error, setError] = useState('');
-
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Real-time DSE Stock Data</h1>
-
-      {error && <p>{error}</p>}
-      {!error && stocks.length === 0 && <p>Loading stock data...</p>}
-
-      {!error && stocks.length > 0 && (
-        <table style={{ width: '100%', border: '1px solid black', marginTop: '20px', borderCollapse: 'collapse' }}>
+      {error && <p style={{color:"red"}}>{error}</p>}
+      {stocks.length === 0 && !error && <p>Loading data...</p>}
+      {stocks.length > 0 && (
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
           <thead>
             <tr>
-              <th style={{ border: '1px solid black' }}>Trading Code</th>
+              <th style={{border:"1px solid black"}}>Trading Code</th>
               <th style={{ border: '1px solid black' }}>LTP</th>
               <th style={{ border: '1px solid black' }}>High</th>
               <th style={{ border: '1px solid black' }}>Low</th>
@@ -45,8 +40,6 @@ export default function StocksPage() {
           </tbody>
         </table>
       )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }
